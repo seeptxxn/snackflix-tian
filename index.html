@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>🍿 SnackFlix TianTiwi</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+      background: #0a0a14;
+      color: white;
+      padding-bottom: 80px;
+    }
+
+    .header {
+      background: #111;
+      padding: 12px;
+      text-align: center;
+      border-bottom: 2px solid #d4af37;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header h1 {
+      font-size: 1.3rem;
+      color: #ffd966;
+    }
+
+    .screen {
+      background: #000;
+      margin: 8px 10px;
+      padding: 10px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid #333;
+      font-weight: bold;
+      color: #d4af37;
+      font-size: 0.9rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin: 6px 10px;
+      position: sticky;
+      top: 58px;
+      z-index: 10;
+      background: #0a0a14;
+      padding: 4px;
+      border-radius: 20px;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border-radius: 18px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: #1a1a28;
+      border: 2px solid #333;
+      color: #aaa;
+    }
+    .tab.on {
+      background: #d4af37;
+      color: #000;
+      border-color: #d4af37;
+    }
+
+    .menu-area {
+      padding: 6px 10px;
+    }
+
+    .menu-title {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #ffd966;
+      margin: 12px 0 6px;
+      padding-left: 8px;
+      border-left: 4px solid #ffd966;
+    }
+
+    .card {
+      background: #161625;
+      border: 2px solid #2a2a3a;
+      border-radius: 14px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+
+    .varian-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+      margin: 6px 0;
+    }
+    .varian-grid.col3 { grid-template-columns: repeat(3, 1fr); }
+
+    .varian-btn {
+      background: #222;
+      border: 2px solid #333;
+      padding: 8px 2px;
+      border-radius: 10px;
+      font-size: 0.65rem;
+      text-align: center;
+      cursor: pointer;
+      color: #ccc;
+      font-weight: bold;
+      transition: 0.15s;
+    }
+    .varian-btn.pilih {
+      background: #d4af37;
+      color: #000;
+      border-color: #d4af37;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 6px 0;
+      font-size: 0.75rem;
+    }
+    .btn-sm {
+      background: #2a2a38;
+      border: 2px solid #444;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+    .btn-sm.aktif {
+      background: #d4af37;
+      color: #000;
+      border-color: #d4af37;
+    }
+    .btn-qty {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qty-angka {
+      font-weight: bold;
+      font-size: 0.9rem;
+      min-width: 22px;
+      text-align: center;
+      color: #ffd966;
+    }
+
+    .btn-tambah {
+      background: #25D366;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 6px;
+      font-size: 0.85rem;
+    }
+
+    /* CART BAWAH - kecil tidak menghalangi */
+    .cart-bottom {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #0d0d18;
+      border-top: 3px solid #d4af37;
+      padding: 8px 10px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .cart-badge {
+      background: #d4af37;
+      color: #000;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.8rem;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .cart-ringkas {
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+    .cart-ringkas .total {
+      font-weight: bold;
+      color: #ffd966;
+      font-size: 1rem;
+    }
+    .cart-ringkas .info {
+      font-size: 0.65rem;
+      color: #888;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .btn-order {
+      background: #25D366;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    /* POPUP DETAIL CART */
+    .popup-bg {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 50;
+      justify-content: center;
+      align-items: flex-end;
+    }
+    .popup-cart {
+      background: #161625;
+      border: 2px solid #d4af37;
+      border-radius: 16px 16px 0 0;
+      padding: 14px;
+      width: 100%;
+      max-height: 55vh;
+      overflow-y: auto;
+    }
+    .popup-cart h3 {
+      color: #ffd966;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 0;
+      border-bottom: 1px solid #222;
+      font-size: 0.7rem;
+    }
+    .cart-item .nama { flex: 1; }
+    .cart-item .harga { color: #ffd966; font-weight: bold; margin: 0 6px; }
+    .cart-item button {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: none; font-weight: bold; font-size: 0.7rem; cursor: pointer;
+    }
+    .btn-minus { background: #333; color: #fff; }
+    .btn-plus { background: #333; color: #fff; }
+    .btn-edit { background: #d4af37; color: #000; font-size: 0.6rem; border-radius: 8px; padding: 2px 6px; width: auto; height: auto; }
+    .btn-hapus { background: #e74c3c; color: #fff; }
+    .btn-tutup {
+      background: #444;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 12px;
+      width: 100%;
+      margin-top: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .subtotal-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: #aaa;
+      padding: 2px 0;
+    }
+    .grand-total {
+      font-weight: bold;
+      color: #ffd966;
+      font-size: 1rem;
+      border-top: 1px solid #d4af3744;
+      padding-top: 6px;
+      margin-top: 4px;
+    }
+
+    /* MODAL */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 60;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .modal-box {
+      background: #161625;
+      border: 2px solid #d4af37;
+      border-radius: 16px;
+      padding: 14px;
+      max-width: 380px;
+      width: 100%;
+    }
+    .modal-box h3 { color: #ffd966; font-size: 0.95rem; margin-bottom: 8px; }
+    .modal-row { display: flex; gap: 6px; margin-top: 10px; justify-content: flex-end; }
+  </style>
+</head>
+<body>
+
+<div class="header"><h1>🍿 SnackFlix TianTiwi</h1></div>
+<div class="screen">🎬 ROOM CINEMA 1</div>
+
+<div class="tabs">
+  <div id="tabMakanan" class="tab on" onclick="bukaTab('makanan')">🍔 MAKANAN</div>
+  <div id="tabMinuman" class="tab" onclick="bukaTab('minuman')">🥤 MINUMAN</div>
+</div>
+
+<div class="menu-area" id="menuArea"></div>
+
+<!-- CART BAWAH -->
+<div class="cart-bottom">
+  <div class="cart-badge" id="cartBadge" onclick="bukaCart()">0</div>
+  <div class="cart-ringkas" onclick="bukaCart()">
+    <div class="total" id="cartTotalKecil">Rp 0</div>
+    <div class="info" id="cartInfoKecil">✨ Kosong</div>
+  </div>
+  <button class="btn-order" onclick="pesanSekarang()">📲 ORDER</button>
+</div>
+
+<!-- POPUP CART -->
+<div class="popup-bg" id="popupCartBg" onclick="tutupCart()">
+  <div class="popup-cart" onclick="event.stopPropagation()">
+    <h3>🧾 Keranjang Belanja</h3>
+    <div id="cartListPopup"></div>
+    <div id="cartSubPopup"></div>
+    <div class="grand-total">💰 TOTAL: <span id="cartGrandPopup">Rp 0</span></div>
+    <button class="btn-tutup" onclick="tutupCart()">▼ TUTUP</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<script>
+// ==================== DATA ====================
+const SIMPAN = 'snackflix_data';
+let keranjang = [];
+let tabIni = 'makanan';
+let editIdx = null;
+
+// Pilihan sementara
+let pil = {
+  mieVarian: '', mieJml: 1, mieTelur: 0, miePedas: false,
+  pentolJml: 5, pentolBumbu: 'Kuah', pentolPedas: false,
+  sosisJml: 1, sosisPedas: false, sosisMayo: false, sosisSaus: false,
+  popcornVarian: '', popcornJml: 1,
+  sisriVarian: '', sisriJml: 1,
+  marimasVarian: '', marimasJml: 1,
+  tehjusVarian: '', tehjusJml: 1,
+  specVarian: '', specHangat: false, specJml: 1,
+  popiceVarian: '', popiceJml: 1,
+};
+
+// Load data
+if(localStorage.getItem(SIMPAN)) {
+  try { keranjang = JSON.parse(localStorage.getItem(SIMPAN)); } catch(e) { keranjang = []; }
+}
+
+function simpan() { localStorage.setItem(SIMPAN, JSON.stringify(keranjang)); }
+
+// ==================== TAMPILKAN TAB ====================
+function bukaTab(tab) {
+  tabIni = tab;
+  document.getElementById('tabMakanan').classList.toggle('on', tab==='makanan');
+  document.getElementById('tabMinuman').classList.toggle('on', tab==='minuman');
+  renderMenu();
+}
+
+function renderMenu() {
+  const area = document.getElementById('menuArea');
+  if(tabIni === 'makanan') {
+    area.innerHTML = `
+      <div class="menu-title">🍜 Mie Instan (Rp 6.000 + Telur Rp 3.000)</div>
+      <div class="card">
+        <div class="varian-grid">
+          ${['Ayam Bawang','Rendang','Ayam Geprek','Soto'].map(v => `
+            <div class="varian-btn ${pil.mieVarian===v?'pilih':''}" onclick="pil.mieVarian='${v}';renderMenu()">${v}</div>
+          `).join('')}
+        </div>
+        <div class="row">
+          🍜 Mie: <span class="btn-sm btn-qty" onclick="pil.mieJml=Math.max(1,pil.mieJml-1);renderMenu()">−</span>
+          <span class="qty-angka">${pil.mieJml}</span>
+          <span class="btn-sm btn-qty" onclick="pil.mieJml++;renderMenu()">+</span>
+          🥚 Telur: <span class="btn-sm btn-qty" onclick="pil.mieTelur=Math.max(0,pil.mieTelur-1);renderMenu()">−</span>
+          <span class="qty-angka">${pil.mieTelur}</span>
+          <span class="btn-sm btn-qty" onclick="pil.mieTelur++;renderMenu()">+</span>
+        </div>
+        <div class="row">
+          <span class="btn-sm ${pil.miePedas?'aktif':''}" onclick="pil.miePedas=!pil.miePedas;renderMenu()">🌶️ Pedas</span>
+        </div>
+        <button class="btn-tambah" onclick="tambahMie()">➕ MASUKKAN</button>
+      </div>
+
+      <div class="menu-title">🍢 Pentol (Rp 1.000/biji, min 5)</div>
+      <div class="card">
+        <div class="row">
+          <span class="btn-sm ${pil.pentolBumbu==='Kuah'?'aktif':''}" onclick="pil.pentolBumbu='Kuah';renderMenu()">🥣 Kuah</span>
+          <span class="btn-sm ${pil.pentolBumbu==='Bumbu Kacang'?'aktif':''}" onclick="pil.pentolBumbu='Bumbu Kacang';renderMenu()">🥜 Kacang</span>
+          <span class="btn-sm ${pil.pentolPedas?'aktif':''}" onclick="pil.pentolPedas=!pil.pentolPedas;renderMenu()">🌶️ Pedas</span>
+        </div>
+        <div class="row">
+          Jumlah: <span class="btn-sm btn-qty" onclick="pil.pentolJml=Math.max(5,pil.pentolJml-1);renderMenu()">−</span>
+          <span class="qty-angka">${pil.pentolJml}</span>
+          <span class="btn-sm btn-qty" onclick="pil.pentolJml++;renderMenu()">+</span> biji
+        </div>
+        <button class="btn-tambah" onclick="tambahPentol()">➕ MASUKKAN</button>
+      </div>
+
+      <div class="menu-title">🌭 Sosis Bakar (Rp 6.000)</div>
+      <div class="card">
+        <div class="row">
+          Jumlah: <span class="btn-sm btn-qty" onclick="pil.sosisJml=Math.max(1,pil.sosisJml-1);renderMenu()">−</span>
+          <span class="qty-angka">${pil.sosisJml}</span>
+          <span class="btn-sm btn-qty" onclick="pil.sosisJml++;renderMenu()">+</span>
+        </div>
+        <div class="row">
+          <span class="btn-sm ${pil.sosisPedas?'aktif':''}" onclick="pil.sosisPedas=!pil.sosisPedas;renderMenu()">🌶️ Pedas</span>
+          <span class="btn-sm ${pil.sosisMayo?'aktif':''}" onclick="pil.sosisMayo=!pil.sosisMayo;renderMenu()">🥫 Mayo</span>
+          <span class="btn-sm ${pil.sosisSaus?'aktif':''}" onclick="pil.sosisSaus=!pil.sosisSaus;renderMenu()">🍅 Saus Tomat</span>
+        </div>
+        <button class="btn-tambah" onclick="tambahSosis()">➕ MASUKKAN</button>
+      </div>
+
+      <div class="menu-title">🍿 Popcorn (Rp 5.000)</div>
+      <div class="card">
+        <div class="varian-grid">
+          ${['Manis','Asin','Pedas','Keju'].map(v => `
+            <div class="varian-btn ${pil.popcornVarian===v?'pilih':''}" onclick="pil.popcornVarian='${v}';renderMenu()">${v}</div>
+          `).join('')}
+        </div>
+        <div class="row">
+          Jumlah: <span class="btn-sm btn-qty" onclick="pil.popcornJml=Math.max(1,pil.popcornJml-1);renderMenu()">−</span>
+          <span class="qty-angka">${pil.popcornJml}</span>
+          <span class="btn-sm btn-qty" onclick="pil.popcornJml++;renderMenu()">+</span>
+        </div>
+        <button class="btn-tambah" onclick="tambahPopcorn()">➕ MASUKKAN</button>
+      </div>
+    `;
+  } else {
+    area.innerHTML = `
+      <div class="menu-title">🧃 Teh Sisri (Rp 2.000)</div>
+      <div class="card">
+        <div class="varian-grid">
+          ${['Apel','Blackcurrant','Gula Batu','Cincau','Original','Lemon','Melati','Mangga'].map(v => `
+            <div class="varian-btn ${pil.sisriVarian===v?'pilih':''}" onclick="pil.sisriVarian='${v}';renderMenu()">${v}</div>
+          `).join('')}
+        </div>
+        <div class="row">
+          Jumlah: <span class="btn-sm btn-qty" onclick="pil.sisriJml=Math.max(1,pil.sisriJml-1);renderMenu()">−</span>
+          <span class="qty-angka">${pil.sisriJml}</span>
+          <span class="btn-sm btn-qty" onclick="pil.sisriJml++;renderMenu()">+</span>
+        </div>
+        <button class="btn-tambah" onclick="tambahSisri()">➕ MASUKKAN</button>
+      </div>
+
+      <div class="menu-title">🍹 Marimas (Rp 3.000)</div>
+      <div class="card">
+        <div class="varian-grid">
+          ${['Anggur','Apel Manis','Jambu','Jeruk','Jeruk Nipis','Mangga','Mangga Arumanis','Melon','Nanas Madu','Nanas','Stroberi'].map(v => `
+            <div class="varian-btn ${pil.marimasVarian===v?'pilih':''}" onclick="pil.marimasVarian='${v}';renderMenu()">${v}</div>
+          `).join('')}
+        </div>
+        <div class="row">
+          Jumlah: <span class="btn-sm btn-qty" onclick="pil.marimasJml=Math.max(1,pil.marimasJml-1);renderMenu()">−</span>
+          <span class="qty-angka">${pil.marimasJml}</span>
+          <span class="btn-sm btn-qty" onclick="pil.marimasJml++;renderMenu()">+</span>
+        </div>
+        <button class="btn-tambah" onclick="tambahMarimas()">➕ MASUKKAN</button>
+      </div>
+
+      <div class="menu-title">🫖 Teh Jus Gula Batu (Rp 2.000)</div>
+      <div class="card">
+        <div class="varian-grid col3">
+          ${['Gula Batu','Melati','Lemon','Apel','Madu'].map(v => `
+            <div class="varian-btn ${pil.tehjusVarian===v?'pilih':''}" onclick="pil.tehjusVarian='${v}';renderMenu()">${v}</div>
+          `).join('')}
+        </div>
+        <div class="row">
+          Jumlah: <span class="btn-sm btn-qty" onclick="pil.tehjusJml=Math.max(1,pil.tehjusJml-1);renderMenu()">−</span>
+          <span class="qty-angka">${pil.tehjusJml}</span>
+          <span class="btn-sm btn-qty" onclick="pil.tehjusJml++;renderMenu()">+</span>
+        </div>
+        <button class="btn-tambah" onclick="tambahTehjus()">➕ MASUKKAN</button>
+      </div>
+
+      <div class="menu-title">☕ Minuman Spesial (Rp 4.000)</div>
+      <div class="card">
+        <div class="varian-grid col3">
+          ${['Teh Tarik','Teh Solo','Chocolatos','Matcha','Vanilla Latte'].map(v => `
+            <div class="varian-btn ${pil.specVarian===v?'pilih':''}" onclick="pil.specVarian='${v}';renderMenu()">${v}</div>
+          `).join('')}
+        </div>
+        <div class="row">
+          <span class="btn-sm ${!pil.specHangat?'aktif':''}" onclick="pil.specHangat=false;renderMenu()">❄️ Dingin</span>
+          <span class="btn-sm ${pil.specHangat?'aktif':''}" onclick="pil.specHangat=true;renderMenu()">🔥 Hangat</span>
+        </div>
+        <div class="row">
+          Jumlah: <span class="btn-sm btn-qty" onclick="pil.specJml=Math.max(1,pil.specJml-1);renderMenu()">−</span>
+          <span class="qty-angka">${pil.specJml}</span>
+          <span class="btn-sm btn-qty" onclick="pil.specJml++;renderMenu()">+</span>
+        </div>
+        <button class="btn-tambah" onclick="tambahSpec()">➕ MASUKKAN</button>
+      </div>
+
+      <div class="menu-title">🧊 Pop Ice (Rp 5.000) ❄️</div>
+      <div class="card">
+        <div class="varian-grid">
+          ${['Durian','Mango','Strawberry','Coklat','Vanilla','Blue','Permen Karet'].map(v => `
+            <div class="varian-btn ${pil.popiceVarian===v?'pilih':''}" onclick="pil.popiceVarian='${v}';renderMenu()">${v}</div>
+          `).join('')}
+        </div>
+        <div class="row">
+          Jumlah: <span class="btn-sm btn-qty" onclick="pil.popiceJml=Math.max(1,pil.popiceJml-1);renderMenu()">−</span>
+          <span class="qty-angka">${pil.popiceJml}</span>
+          <span class="btn-sm btn-qty" onclick="pil.popiceJml++;renderMenu()">+</span>
+        </div>
+        <button class="btn-tambah" onclick="tambahPopice()">➕ MASUKKAN</button>
+      </div>
+    `;
+  }
+  updateCartKecil();
+}
+
+// ==================== KERANJANG ====================
+function kunci(item) {
+  let k = item.tipe + '|' + (item.varian || '');
+  if(item.tipe==='mie') k += '|t=' + (item.telur||0) + '|p=' + (item.pedas?1:0);
+  if(item.tipe==='pentol') k += '|b=' + (item.bumbu||'') + '|p=' + (item.pedas?1:0);
+  if(item.tipe==='sosis') k += '|p=' + (item.pedas?1:0) + '|m=' + (item.mayo?1:0) + '|s=' + (item.saus?1:0);
+  if(item.tipe==='specdrink') k += '|h=' + (item.hangat?1:0);
+  return k;
+}
+
+function masukKeranjang(item) {
+  const k = kunci(item);
+  const ada = keranjang.find(i => kunci(i) === k);
+  if(ada) {
+    ada.jml = (ada.jml || 1) + (item.jml || 1);
+    ada.harga = ada.hargaSatuan * ada.jml;
+  } else {
+    item.hargaSatuan = item.harga / (item.jml || 1);
+    keranjang.push(item);
+  }
+  simpan();
+  renderMenu();
+}
+
+function ubahJml(idx, delta) {
+  const item = keranjang[idx];
+  const baru = (item.jml || 1) + delta;
+  if(baru < 1) {
+    keranjang.splice(idx, 1);
+  } else {
+    item.jml = baru;
+    item.harga = item.hargaSatuan * item.jml;
+  }
+  simpan();
+  renderMenu();
+}
+
+function hapusItem(idx) {
+  keranjang.splice(idx, 1);
+  simpan();
+  renderMenu();
+}
+
+function hitungSubtotal() {
+  let mie = 0, snack = 0, minum = 0;
+  keranjang.forEach(i => {
+    if(i.tipe === 'mie') mie += i.harga;
+    else if(['pentol','sosis','popcorn'].includes(i.tipe)) snack += i.harga;
+    else minum += i.harga;
+  });
+  return { mie, snack, minum, total: mie + snack + minum };
+}
+
+function updateCartKecil() {
+  const badge = document.getElementById('cartBadge');
+  const totalEl = document.getElementById('cartTotalKecil');
+  const infoEl = document.getElementById('cartInfoKecil');
+  const sub = hitungSubtotal();
+  badge.innerText = keranjang.length;
+  totalEl.innerText = 'Rp ' + sub.total.toLocaleString();
+  if(keranjang.length === 0) {
+    infoEl.innerText = '✨ Kosong';
+  } else {
+    infoEl.innerText = keranjang.map(i => i.nama).join(', ');
+  }
+}
+
+function bukaCart() {
+  const popup = document.getElementById('popupCartBg');
+  const list = document.getElementById('cartListPopup');
+  const subDiv = document.getElementById('cartSubPopup');
+  const grand = document.getElementById('cartGrandPopup');
+
+  if(keranjang.length === 0) {
+    list.innerHTML = '<div style="color:#777;text-align:center;padding:12px;">✨ Keranjang kosong</div>';
+    subDiv.innerHTML = '';
+    grand.innerText = 'Rp 0';
+  } else {
+    list.innerHTML = keranjang.map((item, idx) => `
+      <div class="cart-item">
+        <span class="nama">${item.nama}</span>
+        <button class="btn-minus" onclick="ubahJml(${idx},-1)">−</button>
+        <span>${item.jml||1}</span>
+        <button class="btn-plus" onclick="ubahJml(${idx},1)">+</button>
+        <span class="harga">Rp ${item.harga.toLocaleString()}</span>
+        <button class="btn-edit" onclick="editItem(${idx})">✏️</button>
+        <button class="btn-hapus" onclick="hapusItem(${idx})">✕</button>
+      </div>
+    `).join('');
+
+    const sub = hitungSubtotal();
+    subDiv.innerHTML = `
+      ${sub.mie > 0 ? `<div class="subtotal-row"><span>🍜 Mie</span><span>Rp ${sub.mie.toLocaleString()}</span></div>` : ''}
+      ${sub.snack > 0 ? `<div class="subtotal-row"><span>🍢 Snack</span><span>Rp ${sub.snack.toLocaleString()}</span></div>` : ''}
+      ${sub.minum > 0 ? `<div class="subtotal-row"><span>🥤 Minuman</span><span>Rp ${sub.minum.toLocaleString()}</span></div>` : ''}
+    `;
+    grand.innerText = 'Rp ' + sub.total.toLocaleString();
+  }
+  popup.style.display = 'flex';
+}
+
+function tutupCart() {
+  document.getElementById('popupCartBg').style.display = 'none';
+  updateCartKecil();
+}
+
+// ==================== EDIT ====================
+function editItem(idx) {
+  editIdx = idx;
+  const item = keranjang[idx];
+  let html = `<h3>✏️ Ubah</h3><p style="font-size:0.8rem;">${item.nama}</p>`;
+
+  if(item.tipe === 'mie') {
+    html += `<div class="row" style="margin-top:8px;">
+      🥚 Telur: <span class="btn-sm btn-qty" onclick="editTelur(-1)">−</span>
+      <span class="qty-angka" id="editTelurVal">${item.telur||0}</span>
+      <span class="btn-sm btn-qty" onclick="editTelur(1)">+</span>
+    </div>
+    <div class="row">
+      <span class="btn-sm ${item.pedas?'aktif':''}" id="editPedas" onclick="editPedas()">🌶️ Pedas</span>
+    </div>`;
+  } else if(item.tipe === 'pentol') {
+    html += `<div class="row" style="margin-top:8px;">
+      <span class="btn-sm ${item.bumbu==='Kuah'?'aktif':''}" onclick="editBumbu('Kuah')">🥣 Kuah</span>
+      <span class="btn-sm ${item.bumbu==='Bumbu Kacang'?'aktif':''}" onclick="editBumbu('Bumbu Kacang')">🥜 Kacang</span>
+      <span class="btn-sm ${item.pedas?'aktif':''}" onclick="editPedas()">🌶️ Pedas</span>
+    </div>`;
+  } else if(item.tipe === 'sosis') {
+    html += `<div class="row" style="margin-top:8px;">
+      <span class="btn-sm ${item.pedas?'aktif':''}" onclick="editPedas()">🌶️ Pedas</span>
+      <span class="btn-sm ${item.mayo?'aktif':''}" onclick="editMayo()">🥫 Mayo</span>
+      <span class="btn-sm ${item.saus?'aktif':''}" onclick="editSaus()">🍅 Saus Tomat</span>
+    </div>`;
+  } else if(item.tipe === 'specdrink') {
+    html += `<div class="row" style="margin-top:8px;">
+      <span class="btn-sm ${!item.hangat?'aktif':''}" onclick="editSuhu(false)">❄️ Dingin</span>
+      <span class="btn-sm ${item.hangat?'aktif':''}" onclick="editSuhu(true)">🔥 Hangat</span>
+    </div>`;
+  } else {
+    html += `<p style="color:#aaa;font-size:0.75rem;">Ubah jumlah pakai tombol +/−</p>`;
+  }
+
+  html += `<div class="modal-row"><button class="btn-sm" onclick="tutupModal()">SELESAI</button></div>`;
+  document.getElementById('modalBox').innerHTML = html;
+  document.getElementById('modalBg').style.display = 'flex';
+}
+
+function editTelur(d) {
+  const item = keranjang[editIdx];
+  item.telur = Math.max(0, (item.telur||0) + d);
+  item.harga = (item.jml * 6000) + (item.telur * 3000);
+  item.hargaSatuan = 6000 + (item.telur / item.jml * 3000);
+  updateLabelMie(item);
+  simpan();
+  editItem(editIdx);
+}
+
+function editPedas() {
+  const item = keranjang[editIdx];
+  item.pedas = !item.pedas;
+  if(item.tipe === 'mie') updateLabelMie(item);
+  else if(item.tipe === 'pentol') item.nama = `Pentol ${item.bumbu} x${item.jml}${item.pedas?' 🌶️':''}`;
+  else if(item.tipe === 'sosis') updateLabelSosis(item);
+  simpan();
+  editItem(editIdx);
+}
+
+function editMayo() {
+  const item = keranjang[editIdx];
+  item.mayo = !item.mayo;
+  updateLabelSosis(item);
+  simpan();
+  editItem(editIdx);
+}
+
+function editSaus() {
+  const item = keranjang[editIdx];
+  item.saus = !item.saus;
+  updateLabelSosis(item);
+  simpan();
+  editItem(editIdx);
+}
+
+function editBumbu(b) {
+  const item = keranjang[editIdx];
+  item.bumbu = b;
+  item.nama = `Pentol ${b} x${item.jml}${item.pedas?' 🌶️':''}`;
+  simpan();
+  editItem(editIdx);
+}
+
+function editSuhu(h) {
+  const item = keranjang[editIdx];
+  item.hangat = h;
+  item.nama = `${item.varian} ${h?'🔥hangat':'❄️dingin'} x${item.jml}`;
+  simpan();
+  editItem(editIdx);
+}
+
+function updateLabelMie(item) {
+  let n = `Mie ${item.varian} x${item.jml}`;
+  if(item.telur > 0) n += ` +${item.telur}🥚`;
+  if(item.pedas) n += ` 🌶️`;
+  item.nama = n;
+}
+
+function updateLabelSosis(item) {
+  let n = `Sosis Bakar x${item.jml}`;
+  if(item.pedas) n += ` 🌶️`;
+  if(item.mayo) n += ` 🥫`;
+  if(item.saus) n += ` 🍅`;
+  item.nama = n;
+}
+
+function tutupModal() {
+  document.getElementById('modalBg').style.display = 'none';
+  renderMenu();
+}
+
+// ==================== TAMBAH ITEM ====================
+function tambahMie() {
+  if(!pil.mieVarian) { alert('Pilih varian mie dulu ya!'); return; }
+  const jml = pil.mieJml, telur = pil.mieTelur;
+  const harga = (jml * 6000) + (telur * 3000);
+  let nama = `Mie ${pil.mieVarian} x${jml}`;
+  if(telur > 0) nama += ` +${telur}🥚`;
+  if(pil.miePedas) nama += ` 🌶️`;
+  masukKeranjang({ tipe: 'mie', varian: pil.mieVarian, jml, telur, pedas: pil.miePedas, harga, nama });
+  pil.mieVarian = ''; pil.mieJml = 1; pil.mieTelur = 0; pil.miePedas = false;
+  renderMenu();
+}
+
+function tambahPentol() {
+  if(pil.pentolJml < 5) { alert('Minimal 5 biji ya!'); return; }
+  const jml = pil.pentolJml;
+  const harga = jml * 1000;
+  let nama = `Pentol ${pil.pentolBumbu} x${jml}`;
+  if(pil.pentolPedas) nama += ` 🌶️`;
+  masukKeranjang({ tipe: 'pentol', jml, bumbu: pil.pentolBumbu, pedas: pil.pentolPedas, harga, nama });
+  pil.pentolJml = 5; pil.pentolBumbu = 'Kuah'; pil.pentolPedas = false;
+  renderMenu();
+}
+
+function tambahSosis() {
+  const jml = pil.sosisJml;
+  const harga = jml * 6000;
+  let nama = `Sosis Bakar x${jml}`;
+  if(pil.sosisPedas) nama += ` 🌶️`;
+  if(pil.sosisMayo) nama += ` 🥫`;
+  if(pil.sosisSaus) nama += ` 🍅`;
+  masukKeranjang({ tipe: 'sosis', jml, pedas: pil.sosisPedas, mayo: pil.sosisMayo, saus: pil.sosisSaus, harga, nama });
+  pil.sosisJml = 1; pil.sosisPedas = false; pil.sosisMayo = false; pil.sosisSaus = false;
+  renderMenu();
+}
+
+function tambahPopcorn() {
+  if(!pil.popcornVarian) { alert('Pilih rasa popcorn dulu!'); return; }
+  const jml = pil.popcornJml;
+  const harga = jml * 5000;
+  masukKeranjang({ tipe: 'popcorn', varian: pil.popcornVarian, jml, harga, nama: `Popcorn ${pil.popcornVarian} x${jml}` });
+  pil.popcornVarian = ''; pil.popcornJml = 1;
+  renderMenu();
+}
+
+function tambahSisri() {
+  if(!pil.sisriVarian) { alert('Pilih rasa Teh Sisri dulu!'); return; }
+  const jml = pil.sisriJml;
+  masukKeranjang({ tipe: 'sisri', varian: pil.sisriVarian, jml, harga: jml * 2000, nama: `Teh Sisri ${pil.sisriVarian} x${jml}` });
+  pil.sisriVarian = ''; pil.sisriJml = 1;
+  renderMenu();
+}
+
+function tambahMarimas() {
+  if(!pil.marimasVarian) { alert('Pilih rasa Marimas dulu!'); return; }
+  const jml = pil.marimasJml;
+  masukKeranjang({ tipe: 'marimas', varian: pil.marimasVarian, jml, harga: jml * 3000, nama: `Marimas ${pil.marimasVarian} x${jml}` });
+  pil.marimasVarian = ''; pil.marimasJml = 1;
+  renderMenu();
+}
+
+function tambahTehjus() {
+  if(!pil.tehjusVarian) { alert('Pilih rasa Teh Jus dulu!'); return; }
+  const jml = pil.tehjusJml;
+  masukKeranjang({ tipe: 'tehjus', varian: pil.tehjusVarian, jml, harga: jml * 2000, nama: `Teh Jus ${pil.tehjusVarian} x${jml}` });
+  pil.tehjusVarian = ''; pil.tehjusJml = 1;
+  renderMenu();
+}
+
+function tambahSpec() {
+  if(!pil.specVarian) { alert('Pilih minuman dulu!'); return; }
+  const jml = pil.specJml;
+  const suhu = pil.specHangat ? '🔥hangat' : '❄️dingin';
+  masukKeranjang({ tipe: 'specdrink', varian: pil.specVarian, jml, hangat: pil.specHangat, harga: jml * 4000, nama: `${pil.specVarian} ${suhu} x${jml}` });
+  pil.specVarian = ''; pil.specHangat = false; pil.specJml = 1;
+  renderMenu();
+}
+
+function tambahPopice() {
+  if(!pil.popiceVarian) { alert('Pilih rasa Pop Ice dulu!'); return; }
+  const jml = pil.popiceJml;
+  masukKeranjang({ tipe: 'popice', varian: pil.popiceVarian, jml, harga: jml * 5000, nama: `Pop Ice ${pil.popiceVarian} x${jml} ❄️` });
+  pil.popiceVarian = ''; pil.popiceJml = 1;
+  renderMenu();
+}
+
+// ==================== ORDER ====================
+function adaMakanan() { return keranjang.some(i => ['mie','pentol','sosis','popcorn'].includes(i.tipe)); }
+function adaMinuman() { return keranjang.some(i => ['sisri','marimas','tehjus','specdrink','popice'].includes(i.tipe)); }
+
+function pesanSekarang() {
+  if(keranjang.length === 0) { alert('Pilih makanan atau minuman dulu ya! 😊'); return; }
+
+  if(adaMakanan() && !adaMinuman()) {
+    tampilModal('Kamu hanya pesan MAKANAN 🍔<br><br>Mau tambah MINUMAN juga? 🥤', 'minuman');
+    return;
+  }
+  if(!adaMakanan() && adaMinuman()) {
+    tampilModal('Kamu hanya pesan MINUMAN 🥤<br><br>Mau tambah MAKANAN juga? 🍔', 'makanan');
+    return;
+  }
+  konfirmasiAkhir();
+}
+
+function tampilModal(pesan, tab) {
+  const modal = document.getElementById('modalBg');
+  document.getElementById('modalBox').innerHTML = `
+    <p style="font-size:0.9rem;">${pesan}</p>
+    <div class="modal-row">
+      <button class="btn-sm" onclick="tutupModal()">❌ TIDAK</button>
+      <button class="btn-sm aktif" onclick="tutupModal();bukaTab('${tab}')">✅ YA, TAMBAH</button>
+    </div>
+  `;
+  modal.style.display = 'flex';
+}
+
+function konfirmasiAkhir() {
+  const sub = hitungSubtotal();
+  let detail = '';
+  keranjang.forEach(i => {
+    detail += `✅ ${i.nama} = Rp ${i.harga.toLocaleString()}<br>`;
+  });
+
+  let subText = '';
+  if(sub.mie > 0) subText += `🍜 Mie: Rp ${sub.mie.toLocaleString()}<br>`;
+  if(sub.snack > 0) subText += `🍢 Snack: Rp ${sub.snack.toLocaleString()}<br>`;
+  if(sub.minum > 0) subText += `🥤 Minuman: Rp ${sub.minum.toLocaleString()}<br>`;
+
+  const modal = document.getElementById('modalBg');
+  document.getElementById('modalBox').innerHTML = `
+    <h3>📋 Cek Pesanan Kamu</h3>
+    <div style="font-size:0.8rem; line-height:1.6;">${detail}</div>
+    <div style="font-size:0.75rem; color:#aaa; margin-top:6px;">${subText}</div>
+    <div style="font-weight:bold; color:#ffd966; font-size:1.1rem; margin-top:6px;">💰 TOTAL: Rp ${sub.total.toLocaleString()}</div>
+    <div class="modal-row">
+      <button class="btn-sm" onclick="tutupModal()">✏️ UBAH</button>
+      <button class="btn-sm aktif" onclick="kirimWA()">📲 KIRIM WA</button>
+    </div>
+  `;
+  modal.style.display = 'flex';
+}
+
+function kirimWA() {
+  const sub = hitungSubtotal();
+  let msg = `🍿 *SnackFlix TianTiwi*\n🎬 Room Cinema 1\n\n📋 *Pesanan:*\n`;
+  keranjang.forEach(i => { msg += `- ${i.nama} = Rp ${i.harga.toLocaleString()}\n`; });
+  if(sub.mie > 0) msg += `\n🍜 *Mie: Rp ${sub.mie.toLocaleString()}*`;
+  if(sub.snack > 0) msg += `\n🍢 *Snack: Rp ${sub.snack.toLocaleString()}*`;
+  if(sub.minum > 0) msg += `\n🥤 *Minuman: Rp ${sub.minum.toLocaleString()}*`;
+  msg += `\n\n💰 *TOTAL: Rp ${sub.total.toLocaleString()}*`;
+  msg += `\n📍 Room Cinema 1`;
+
+  window.open(`https://wa.me/628XXXXXXXXXX?text=${encodeURIComponent(msg)}`, '_blank');
+  tutupModal();
+}
+
+// ==================== INIT ====================
+bukaTab('makanan');
+</script>
+</body>
+</html>
